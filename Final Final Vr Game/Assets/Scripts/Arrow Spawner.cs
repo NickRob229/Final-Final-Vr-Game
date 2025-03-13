@@ -55,14 +55,28 @@ public class ArrowSpawner : MonoBehaviour
 
     private IEnumerator DelayedSpawn()
     {
+        Debug.Log("DelayedSpawn started!"); // Debug
         yield return new WaitForSeconds(_spawnDelay);
 
-        _currentArrow = Instantiate(_arrowPrefab, _notchPoint.transform);
+        Debug.Log("Instantiating arrow..."); // Debug
+        _currentArrow = Instantiate(_arrowPrefab, _notchPoint.transform.position, _notchPoint.transform.rotation);
+        _currentArrow.transform.SetParent(_notchPoint.transform);
+
+        if (_currentArrow == null)
+        {
+            Debug.LogError("Arrow instantiation failed!");
+            yield break;
+        }
 
         ArrowLauncher launcher = _currentArrow.GetComponent<ArrowLauncher>();
         if (launcher != null && _pullInteractable != null)
         {
             launcher.Initialize(_pullInteractable);
         }
+        else
+        {
+            Debug.LogWarning("Launcher or PullInteractable is null!");
+        }
     }
+
 }
